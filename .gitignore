@@ -5,8 +5,9 @@
 .DS_Store
 Thumbs.db
 
-/storage/[Tt]emp/
-/storage/GroupDocs.annotation*.xml
+/storage/*
+!/storage/README.txt
+
 *.lic
 /.settings/
 *.classpath
