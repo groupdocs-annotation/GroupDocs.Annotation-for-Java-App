@@ -21,6 +21,7 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/paper.js/0.11.4/paper-full.min.js"></script>
 
     <script src="app.js"></script>
+    <script src="app.factory.files.js"></script>
     <script src="app.components.js"></script>
     <script src="app.factory.annotation.js"></script>
     <script src="app.factory.replies.js"></script>
@@ -45,7 +46,7 @@
         <md-tooltip>Download the annotated file</md-tooltip>
     </md-button>
     <div ng-controller="AvailableFilesController">
-        <md-select ng-model="$root.selectedFile" aria-label="Files" ng-disabled="true">
+        <md-select ng-model="$root.selectedFile" aria-label="Files">
             <md-option ng-value="item" ng-repeat="item in list">{{ item }}</md-option>
         </md-select>
     </div>

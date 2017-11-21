@@ -344,7 +344,8 @@
 
             if (ant.type) {
                 ant.pageNumber = attrs.number;
-                AnnotationAddFactory.save(ant, function (response) {
+                var a = new AnnotationAddFactory(ant);
+                a.$save({ filename: $rootScope.selectedFile }, function (response) {
                     currentObject.name = response.guid;
                     currentObject.selected = true;
                     currentObject = null;

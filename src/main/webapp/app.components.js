@@ -4,7 +4,6 @@
     var ANNOTATION_TYPE_AREA = 1;
 
     angular.module('GroupDocsAnnotationApp')
-        .factory('FilesFactory', FilesFactory)
         .factory('DocumentInfoFactory', DocumentInfoFactory)
         .factory('AnnotationListFactory', AnnotationListFactory)
         .factory('AnnotationAddFactory', AnnotationAddFactory)
@@ -12,24 +11,10 @@
         .controller('ToolbarController', ToolbarController)
     ;
 
-    function FilesFactory() {
-        var fileList = [
-            'candy.pdf'
-        ];
-        return {
-            list: function () {
-                return fileList;
-            }
-        };
-    }
-
     function DocumentInfoFactory($rootScope, $resource) {
         return $resource('/document/info?file=:filename', {}, {
             get: {
-                method: 'GET',
-                params: {
-                    filename: $rootScope.selectedFile
-                }
+                method: 'GET'
             }
         });
     }
@@ -38,9 +23,6 @@
         return $resource('/annotation/list?file=:filename', {}, {
             query: {
                 method: 'GET',
-                params: {
-                    filename: $rootScope.selectedFile
-                },
                 isArray: true
             }
         });
@@ -49,16 +31,13 @@
     function AnnotationAddFactory($rootScope, $resource) {
         return $resource('/annotation/add?file=:filename', {}, {
             save: {
-                method: 'POST',
-                params: {
-                    filename: $rootScope.selectedFile
-                }
+                method: 'POST'
             }
         });
     }
 
     function AvailableFilesController($scope, FilesFactory) {
-        $scope.list = FilesFactory.list();
+        $scope.list = FilesFactory.query();
     }
 
     function ToolbarController($scope, $mdToast) {
