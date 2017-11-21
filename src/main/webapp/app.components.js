@@ -19,41 +19,39 @@
         return {
             list: function () {
                 return fileList;
-            },
-            selectedFile: fileList[0]
-
+            }
         };
     }
 
-    function DocumentInfoFactory($resource, FilesFactory) {
+    function DocumentInfoFactory($rootScope, $resource) {
         return $resource('/document/info?file=:filename', {}, {
             get: {
                 method: 'GET',
                 params: {
-                    filename: FilesFactory.selectedFile
+                    filename: $rootScope.selectedFile
                 }
             }
         });
     }
 
-    function AnnotationListFactory($resource, FilesFactory) {
+    function AnnotationListFactory($rootScope, $resource) {
         return $resource('/annotation/list?file=:filename', {}, {
             query: {
                 method: 'GET',
                 params: {
-                    filename: FilesFactory.selectedFile
+                    filename: $rootScope.selectedFile
                 },
                 isArray: true
             }
         });
     }
 
-    function AnnotationAddFactory($resource, FilesFactory) {
+    function AnnotationAddFactory($rootScope, $resource) {
         return $resource('/annotation/add?file=:filename', {}, {
             save: {
                 method: 'POST',
                 params: {
-                    filename: FilesFactory.selectedFile
+                    filename: $rootScope.selectedFile
                 }
             }
         });
@@ -61,11 +59,9 @@
 
     function AvailableFilesController($scope, FilesFactory) {
         $scope.list = FilesFactory.list();
-        $scope.selectedFile = FilesFactory.selectedFile;
     }
 
-    function ToolbarController($scope, $mdToast, FilesFactory) {
-        $scope.selectedFile = FilesFactory.selectedFile;
+    function ToolbarController($scope, $mdToast) {
 
         $scope.$on('annotation-added', function (event, args) {
             $mdToast.show(

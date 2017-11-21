@@ -1,10 +1,9 @@
 (function () {
     'use strict';
 
-    function main($rootScope, $scope, AnnotationListFactory, FilesFactory, DocumentInfoFactory) {
+    function main($rootScope, $scope, AnnotationListFactory, DocumentInfoFactory) {
 
         $rootScope.docInfo = DocumentInfoFactory.get();
-        $scope.selectedFile = FilesFactory.selectedFile;
         $scope.annotationsList = AnnotationListFactory.query();
         $rootScope.selectedDrawingTool = 'select';        
     }

@@ -30,6 +30,7 @@
     <script src="app.controller.thread.js"></script>
     <script src="app.controller.tools.js"></script>
     <script src="app.config.js"></script>
+    <script src="app.run.js"></script>
 </head>
 <body ng-cloak>
 
@@ -39,12 +40,12 @@
     </md-button>
     <h1>GroupDocs.Annotation for Java</h1>
     <span flex></span>
-    <md-button class="md-icon-button" ng-href="/download/annotated?file={{ selectedFile }}" target="_blank">
+    <md-button class="md-icon-button" ng-href="/download/annotated?file={{ $root.selectedFile }}" target="_blank">
         <md-icon>file_download</md-icon>
         <md-tooltip>Download the annotated file</md-tooltip>
     </md-button>
     <div ng-controller="AvailableFilesController">
-        <md-select ng-model="selectedFile" aria-label="Files" ng-disabled="true">
+        <md-select ng-model="$root.selectedFile" aria-label="Files" ng-disabled="true">
             <md-option ng-value="item" ng-repeat="item in list">{{ item }}</md-option>
         </md-select>
     </div>
@@ -92,7 +93,7 @@
     <md-content flex id="content" ng-controller="PageCanvasController">
         <md-card ng-repeat="pageInfo in docInfo.pages">
             <gdx-anno-page
-                    file="{{ selectedFile }}"
+                    file="{{ $root.selectedFile }}"
                     number="{{ pageInfo.number }}"
                     width="{{ pageInfo.width }}"
                     height="{{ pageInfo.height }}"
