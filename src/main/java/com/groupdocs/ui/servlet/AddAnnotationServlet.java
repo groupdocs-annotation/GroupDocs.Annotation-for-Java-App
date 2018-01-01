@@ -3,7 +3,6 @@ package com.groupdocs.ui.servlet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.groupdocs.annotation.domain.AnnotationInfo;
 import com.groupdocs.annotation.domain.results.CreateAnnotationResult;
-import com.groupdocs.annotation.domain.results.ListAnnotationsResult;
 import com.groupdocs.annotation.handler.AnnotationImageHandler;
 import com.groupdocs.annotation.handler.input.IDocumentDataHandler;
 import com.groupdocs.annotation.handler.input.dataobjects.Document;

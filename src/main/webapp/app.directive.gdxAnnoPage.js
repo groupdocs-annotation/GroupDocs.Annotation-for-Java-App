@@ -351,7 +351,12 @@
             }
 
             if (ant.type) {
-                ant.pageNumber = attrs.number;
+                ant = angular.merge({}, ant, {
+                    penColor: 0x010101,
+                    penStyle: 1,
+                    penWidth: 2,
+                    pageNumber: attrs.number
+                });
                 var a = new AnnotationAddFactory(ant);
                 a.$save({filename: $rootScope.selectedFile}, function (response) {
                     currentObject.name = response.guid;
