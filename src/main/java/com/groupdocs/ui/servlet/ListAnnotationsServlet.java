@@ -23,14 +23,19 @@ public class ListAnnotationsServlet extends HttpServlet {
         AnnotationImageHandler imageHandler = Utils.createAnnotationImageHandler();
         String filename = request.getParameter("file");
 
-        Document doc = Utils.findDocumentByName(filename);
-        ListAnnotationsResult listResult = imageHandler.getAnnotations(doc.getId());
+        if (filename != null && !filename.isEmpty()) {
+            Document doc = Utils.findDocumentByName(filename);
+            ListAnnotationsResult listResult = imageHandler.getAnnotations(doc.getId());
 
-        ArrayList<GetAnnotationResult> list = new ArrayList<>();
-        for (AnnotationInfo inf : listResult.getAnnotations()) {
-            list.add(imageHandler.getAnnotation(inf.getGuid()));
+            ArrayList<GetAnnotationResult> list = new ArrayList<>();
+            for (AnnotationInfo inf : listResult.getAnnotations()) {
+                list.add(imageHandler.getAnnotation(inf.getGuid()));
+            }
+
+            new ObjectMapper().writeValue(response.getOutputStream(), list);
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+            response.getWriter().print("[]");
         }
-
-        new ObjectMapper().writeValue(response.getOutputStream(), list);
     }
 }
