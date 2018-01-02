@@ -95,7 +95,7 @@
         <md-card ng-repeat="pageInfo in docInfo.pages">
             <gdx-anno-page
                     file="{{ $root.selectedFile }}"
-                    number="{{ pageInfo.number }}"
+                    number="{{ pageInfo.number - 1 }}"
                     width="{{ pageInfo.width }}"
                     height="{{ pageInfo.height }}"
                     oncontextmenu="return false">

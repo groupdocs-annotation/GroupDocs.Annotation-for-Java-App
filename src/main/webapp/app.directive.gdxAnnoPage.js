@@ -116,14 +116,16 @@
                     break;
                 case 'underline':
                     var start = new ps.Point(event.point);
-                    $rootScope.startRow = getStartRow($rootScope.docInfo,start,attrs);
-                    $rootScope.startText = $rootScope.startRow[0].characterCoordinates.filter(x=>Math.floor(x) > Math.floor(start.x));
-                    if($rootScope.startText.length>1){
+                    $rootScope.startRow = getStartRow($rootScope.docInfo, start, attrs);
+                    $rootScope.startText = $rootScope.startRow[0].characterCoordinates.filter(x => Math.floor(x) > Math.floor(start.x)
+                )
+                    ;
+                    if ($rootScope.startText.length > 1) {
                         currentObject = new ps.Path.Line(new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight), new ps.Point($rootScope.startText[1], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight));
                         currentObject.strokeColor = 'black';
                         currentObject.strokeWidth = 2;
                     }
-                    else if($rootScope.startText.length>1){
+                    else if ($rootScope.startText.length > 1) {
                         currentObject = new ps.Path.Line(new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight), new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight));
                         currentObject.strokeColor = 'black';
                         currentObject.strokeWidth = 2;
@@ -131,15 +133,17 @@
                     break;
                 case 'strikeout':
                     var start = new ps.Point(event.point);
-                    $rootScope.startRow = getStartRow($rootScope.docInfo,start,attrs);
-                    $rootScope.startText = $rootScope.startRow[0].characterCoordinates.filter(x=>Math.floor(x) > Math.floor(start.x));
-                    if($rootScope.startText.length>1){
-                        currentObject = new ps.Path.Line(new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight/2), new ps.Point($rootScope.startText[1], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight/2));
+                    $rootScope.startRow = getStartRow($rootScope.docInfo, start, attrs);
+                    $rootScope.startText = $rootScope.startRow[0].characterCoordinates.filter(x => Math.floor(x) > Math.floor(start.x)
+                )
+                    ;
+                    if ($rootScope.startText.length > 1) {
+                        currentObject = new ps.Path.Line(new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight / 2), new ps.Point($rootScope.startText[1], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight / 2));
                         currentObject.strokeColor = 'black';
                         currentObject.strokeWidth = 2;
                     }
-                    else if($rootScope.startText.length>1){
-                        currentObject = new ps.Path.Line(new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight/2), new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight/2));
+                    else if ($rootScope.startText.length > 1) {
+                        currentObject = new ps.Path.Line(new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight / 2), new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight / 2));
                         currentObject.strokeColor = 'black';
                         currentObject.strokeWidth = 2;
                     }
@@ -172,26 +176,30 @@
                     currentObject.position.y += event.delta.y;
                     break;
                 case 'underline':
-                    if(currentObject){
+                    if (currentObject) {
                         var end = new ps.Point(event.point);
-                        var endText = $rootScope.startRow[0].characterCoordinates.filter(x=>Math.floor(x) > Math.floor(end.x));
-                        if(endText.length>1){
+                        var endText = $rootScope.startRow[0].characterCoordinates.filter(x => Math.floor(x) > Math.floor(end.x)
+                    )
+                        ;
+                        if (endText.length > 1) {
                             currentObject.add(new ps.Point(endText[1], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight));
                         }
-                        else if(endText.length>0){
+                        else if (endText.length > 0) {
                             currentObject.add(new ps.Point(endText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight));
                         }
                     }
                     break;
                 case 'strikeout':
-                    if(currentObject){
+                    if (currentObject) {
                         var end = new ps.Point(event.point);
-                        var endText = $rootScope.startRow[0].characterCoordinates.filter(x=>Math.floor(x) > Math.floor(end.x));
-                        if(endText.length>1){
-                            currentObject.add(new ps.Point(endText[1], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight/2));
+                        var endText = $rootScope.startRow[0].characterCoordinates.filter(x => Math.floor(x) > Math.floor(end.x)
+                    )
+                        ;
+                        if (endText.length > 1) {
+                            currentObject.add(new ps.Point(endText[1], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight / 2));
                         }
-                        else if(endText.length>0){
-                            currentObject.add(new ps.Point(endText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight/2));
+                        else if (endText.length > 0) {
+                            currentObject.add(new ps.Point(endText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight / 2));
                         }
 
                     }
@@ -219,13 +227,13 @@
                     currentObject.strokeWidth = 2;
                     break;
                 case 'distance':
-                    if(currentObject){
+                    if (currentObject) {
                         currentObject.remove();
                     }
                     var start = new ps.Point(event.downPoint);
                     var end = new ps.Point(event.point);
-                    var textX = (start.x + end.x)/2;
-                    var textY = (start.y + end.y)/2;
+                    var textX = (start.x + end.x) / 2;
+                    var textY = (start.y + end.y) / 2;
                     var textPoint = new ps.Point(textX, textY);
                     var tailLine = new ps.Path.Line(start, end);
                     var textPosition = end.add(start);
@@ -305,10 +313,10 @@
                     break;
                 case 'distance':
                     ant = {
-                        type : 12,
-                        svgPath : currentObject.exportSVG().children[0].getAttribute('d')+ " " + currentObject.exportSVG().children[1].getAttribute('d') + " " + currentObject.exportSVG().children[2].getAttribute('d'),
-                        text : currentObject.children[3].content,
-                        box : {
+                        type: 12,
+                        svgPath: currentObject.exportSVG().children[0].getAttribute('d') + " " + currentObject.exportSVG().children[1].getAttribute('d') + " " + currentObject.exportSVG().children[2].getAttribute('d'),
+                        text: currentObject.children[3].content,
+                        box: {
                             x: currentObject.children[3].position.x,
                             y: currentObject.children[3].position.y,
                             width: 0,
@@ -318,8 +326,8 @@
                     break;
                 case 'underline':
                     ant = {
-                        type : 11,
-                        svgPath : currentObject.exportSVG().getAttribute('d'),
+                        type: 11,
+                        svgPath: currentObject.exportSVG().getAttribute('d'),
                         box: {
                             x: currentObject.bounds.x,
                             y: currentObject.bounds.y,
@@ -330,8 +338,8 @@
                     break;
                 case 'strikeout':
                     ant = {
-                        type : 11,
-                        svgPath : currentObject.exportSVG().getAttribute('d'),
+                        type: 11,
+                        svgPath: currentObject.exportSVG().getAttribute('d'),
                         box: {
                             x: currentObject.bounds.x,
                             y: currentObject.bounds.y,
@@ -343,9 +351,14 @@
             }
 
             if (ant.type) {
-                ant.pageNumber = attrs.number;
+                ant = angular.merge({}, ant, {
+                    penColor: 0x010101,
+                    penStyle: 1,
+                    penWidth: 2,
+                    pageNumber: attrs.number
+                });
                 var a = new AnnotationAddFactory(ant);
-                a.$save({ filename: $rootScope.selectedFile }, function (response) {
+                a.$save({filename: $rootScope.selectedFile}, function (response) {
                     currentObject.name = response.guid;
                     currentObject.selected = true;
                     currentObject = null;
@@ -466,17 +479,22 @@
             }
         })
     }
-    function getStartRow(docInfo,start,attrs){
+
+    function getStartRow(docInfo, start, attrs) {
         var startRow = [];
-        for(var i = 0; i<30; i++){
-            startRow = docInfo.pages[attrs.number-1].rows.filter(x => Math.floor(x.lineTop) == (Math.floor(start.y)-i ));
-            if(startRow.length>0)
+        for (var i = 0; i < 30; i++) {
+            startRow = docInfo.pages[attrs.number].rows.filter(x => Math.floor(x.lineTop) == (Math.floor(start.y) - i )
+        )
+            ;
+            if (startRow.length > 0)
                 return startRow;
         }
-        if(startRow.length == 0)
-            for(var i = 0; i<30; i++){
-                startRow = docInfo.pages[attrs.number-1].rows.filter(x => Math.floor(x.lineTop) == (Math.floor(start.y)+i ));
-                if(startRow.length>0)
+        if (startRow.length == 0)
+            for (var i = 0; i < 30; i++) {
+                startRow = docInfo.pages[attrs.number].rows.filter(x => Math.floor(x.lineTop) == (Math.floor(start.y) + i )
+            )
+                ;
+                if (startRow.length > 0)
                     return startRow;
             }
 

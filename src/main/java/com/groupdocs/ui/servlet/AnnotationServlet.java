@@ -1,6 +1,7 @@
 package com.groupdocs.ui.servlet;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.groupdocs.annotation.domain.AnnotationInfo;
 import com.groupdocs.annotation.domain.Point;
 import com.groupdocs.annotation.domain.TextFieldInfo;
@@ -53,7 +54,8 @@ public class AnnotationServlet extends HttpServlet {
             case "fieldtext":
                 TextFieldInfo info = new ObjectMapper().readValue(request.getInputStream(), TextFieldInfo.class);
                 SaveAnnotationTextResult result = imageHandler.saveTextField(annotationId, info);
-                new ObjectMapper().writeValue(response.getOutputStream(), result);
+                new ObjectMapper().writer().without(SerializationFeature.FAIL_ON_EMPTY_BEANS)
+                        .writeValue(response.getOutputStream(), result);
                 break;
             case "position":
                 Point point = new ObjectMapper().readValue(request.getInputStream(), Point.class);

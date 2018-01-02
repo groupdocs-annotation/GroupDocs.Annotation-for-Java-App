@@ -30,8 +30,8 @@ public class PageImageServlet
 
         ImageOptions o = new ImageOptions();
         int pageNumber = Integer.valueOf(request.getParameter("page"));
-        o.setPageNumbersToConvert(Arrays.asList(pageNumber - 1));
-        o.setPageNumber(pageNumber - 1);
+        o.setPageNumbersToConvert(Arrays.asList(pageNumber));
+        o.setPageNumber(pageNumber);
         o.setCountPagesToConvert(1);
         if (request.getParameterMap().containsKey("width")) {
             o.setWidth(Integer.valueOf(request.getParameter("width")));
@@ -43,7 +43,7 @@ public class PageImageServlet
         String filename = request.getParameter("file");
 
         for (PageImage pageImage: handler.getPages(filename, o)) {
-            if (pageImage.getPageNumber() == pageNumber - 1) {
+            if (pageImage.getPageNumber() == pageNumber) {
                 IOUtils.copy(pageImage.getStream(), response.getOutputStream());
                 break;
             }
