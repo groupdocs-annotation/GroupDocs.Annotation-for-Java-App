@@ -117,9 +117,9 @@
                 case 'underline':
                     var start = new ps.Point(event.point);
                     $rootScope.startRow = getStartRow($rootScope.docInfo, start, attrs);
-                    $rootScope.startText = $rootScope.startRow[0].characterCoordinates.filter(x => Math.floor(x) > Math.floor(start.x)
-                )
-                    ;
+                    $rootScope.startText = $rootScope.startRow[0].characterCoordinates.filter(function (x) {
+                        return Math.floor(x) > Math.floor(start.x);
+                    });
                     if ($rootScope.startText.length > 1) {
                         currentObject = new ps.Path.Line(new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight), new ps.Point($rootScope.startText[1], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight));
                         currentObject.strokeColor = 'black';
@@ -134,9 +134,9 @@
                 case 'strikeout':
                     var start = new ps.Point(event.point);
                     $rootScope.startRow = getStartRow($rootScope.docInfo, start, attrs);
-                    $rootScope.startText = $rootScope.startRow[0].characterCoordinates.filter(x => Math.floor(x) > Math.floor(start.x)
-                )
-                    ;
+                    $rootScope.startText = $rootScope.startRow[0].characterCoordinates.filter(function (x) {
+                        return Math.floor(x) > Math.floor(start.x);
+                    });
                     if ($rootScope.startText.length > 1) {
                         currentObject = new ps.Path.Line(new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight / 2), new ps.Point($rootScope.startText[1], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight / 2));
                         currentObject.strokeColor = 'black';
@@ -178,9 +178,9 @@
                 case 'underline':
                     if (currentObject) {
                         var end = new ps.Point(event.point);
-                        var endText = $rootScope.startRow[0].characterCoordinates.filter(x => Math.floor(x) > Math.floor(end.x)
-                    )
-                        ;
+                        var endText = $rootScope.startRow[0].characterCoordinates.filter(function (x) {
+                            return Math.floor(x) > Math.floor(end.x);
+                        });
                         if (endText.length > 1) {
                             currentObject.add(new ps.Point(endText[1], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight));
                         }
@@ -192,9 +192,9 @@
                 case 'strikeout':
                     if (currentObject) {
                         var end = new ps.Point(event.point);
-                        var endText = $rootScope.startRow[0].characterCoordinates.filter(x => Math.floor(x) > Math.floor(end.x)
-                    )
-                        ;
+                        var endText = $rootScope.startRow[0].characterCoordinates.filter(function (x) {
+                            return Math.floor(x) > Math.floor(end.x);
+                        });
                         if (endText.length > 1) {
                             currentObject.add(new ps.Point(endText[1], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight / 2));
                         }
@@ -483,17 +483,19 @@
     function getStartRow(docInfo, start, attrs) {
         var startRow = [];
         for (var i = 0; i < 30; i++) {
-            startRow = docInfo.pages[attrs.number].rows.filter(x => Math.floor(x.lineTop) == (Math.floor(start.y) - i )
-        )
+            startRow = docInfo.pages[attrs.number].rows.filter(function (x) {
+                    Math.floor(x.lineTop) == (Math.floor(start.y) - i )
+                }
+            )
             ;
             if (startRow.length > 0)
                 return startRow;
         }
         if (startRow.length == 0)
             for (var i = 0; i < 30; i++) {
-                startRow = docInfo.pages[attrs.number].rows.filter(x => Math.floor(x.lineTop) == (Math.floor(start.y) + i )
-            )
-                ;
+                startRow = docInfo.pages[attrs.number].rows.filter(function (x) {
+                    return Math.floor(x.lineTop) == (Math.floor(start.y) + i )
+                });
                 if (startRow.length > 0)
                     return startRow;
             }
