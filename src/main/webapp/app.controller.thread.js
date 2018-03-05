@@ -27,6 +27,22 @@
                 });
         };
 
+        $scope.saveAnnotationComment = function (item) {
+            ReplyFactory
+                .updateMessage(
+                    {
+                        guid: item.replies[0].guid
+                    },
+                    {
+                        message: item.replies[0].message
+                    }
+                )
+                .$promise
+                .then(function (response) {
+                    item.unsaved = false;
+                });
+        };
+
         $scope.addReply = function (item) {
             RepliesFactory
                 .put(

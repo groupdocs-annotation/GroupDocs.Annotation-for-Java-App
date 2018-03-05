@@ -128,8 +128,8 @@
                             </md-card-header>
                             <md-card-content>
                                 <md-input-container>
-                                    <label ng-show="!selectedAnnotation.fieldText">Comments...</label>
-                                    <textarea ng-model="selectedAnnotation.fieldText" ng-change="selectedAnnotation.unsaved=true"
+                                    <label ng-show="!selectedAnnotation.replies[0].message">Comments...</label>
+                                    <textarea ng-model="selectedAnnotation.replies[0].message" ng-change="selectedAnnotation.unsaved=true"
                                               aria-label="Comments">
                                     </textarea>
                                 </md-input-container>
@@ -140,7 +140,7 @@
                                     <md-icon>reply</md-icon>
                                 </md-button>
                                 <md-button class="md-icon-button" aria-label="Save" ng-show="selectedAnnotation.unsaved"
-                                           ng-click="saveAnnotationFieldText(selectedAnnotation)">
+                                           ng-click="saveAnnotationComment(selectedAnnotation)">
                                     <md-icon>save</md-icon>
                                 </md-button>
                                 <md-button class="md-icon-button" aria-label="Delete"
@@ -149,7 +149,7 @@
                                 </md-button>
                             </md-card-actions>
                         </md-card>
-                        <md-card ng-repeat="reply in selectedAnnotation.replies">
+                        <md-card ng-repeat="reply in selectedAnnotation.replies" ng-hide="$first">
                             <md-card-header>
                                 <md-card-avatar>
                                     <md-icon>person</md-icon>

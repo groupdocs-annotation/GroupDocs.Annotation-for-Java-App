@@ -29,7 +29,7 @@ public class DownloadAnnotatedServlet extends HttpServlet {
 
         InputStream exported;
         try (InputStream original = new FileInputStream(Utils.getStoragePath() + "/" + filename)) {
-            exported = imageHandler.exportAnnotationsToDocument(original, list, document.getDocumentType());
+            exported = imageHandler.exportAnnotationsToDocument(original, list);
         } catch (Exception x) {
             throw new RuntimeException(x);
         }

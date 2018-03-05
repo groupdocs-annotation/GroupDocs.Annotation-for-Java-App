@@ -293,7 +293,7 @@
                     break;
                 case 'pencil':
                     ant.type = 4;
-                    ant.svgPath = currentObject.exportSVG().getAttribute('d');
+                    ant.svgPath = extractSvgPathData(currentObject);
                     break;
                 case 'point':
                     ant = angular.merge({}, ant, {
@@ -308,14 +308,13 @@
                     break;
                 case 'arrow':
                     ant.type = 8;
-                    ant.svgPath = currentObject.exportSVG().firstChild.getAttribute('d');
-                    ant.svgPath += " " + currentObject.exportSVG().lastChild.getAttribute('d');
+                    ant.svgPath = extractSvgPathData(currentObject);
                     break;
                 case 'distance':
                     ant = {
                         type: 12,
-                        svgPath: currentObject.exportSVG().children[0].getAttribute('d') + " " + currentObject.exportSVG().children[1].getAttribute('d') + " " + currentObject.exportSVG().children[2].getAttribute('d'),
-                        text: currentObject.children[3].content,
+                        svgPath: extractSvgPathData(currentObject),
+                        fieldText: currentObject.children[3].content,
                         box: {
                             x: currentObject.children[3].position.x,
                             y: currentObject.children[3].position.y,
@@ -327,7 +326,7 @@
                 case 'underline':
                     ant = {
                         type: 11,
-                        svgPath: currentObject.exportSVG().getAttribute('d'),
+                        svgPath: extractSvgPathData(currentObject),
                         box: {
                             x: currentObject.bounds.x,
                             y: currentObject.bounds.y,
@@ -339,7 +338,7 @@
                 case 'strikeout':
                     ant = {
                         type: 11,
-                        svgPath: currentObject.exportSVG().getAttribute('d'),
+                        svgPath: extractSvgPathData(currentObject),
                         box: {
                             x: currentObject.bounds.x,
                             y: currentObject.bounds.y,
@@ -526,6 +525,24 @@
             }
 
         });
+    }
+
+    function extractSvgPathData(object) {
+        var svg = object.exportSVG();
+        var data = '';
+
+        if (svg.nodeName === 'path') {
+            data = object.exportSVG().getAttribute('d')
+        } else if (svg.nodeName === 'g') {
+            angular.forEach(svg.children, function (value) {
+                if (value.nodeName === 'path') {
+                    data += value.getAttribute('d');
+                    data += ' ';
+                }
+            });
+        }
+
+        return data;
     }
 
     angular.module('GroupDocsAnnotationApp').directive('gdxAnnoPage', main, ['cfpLoadingBar']);

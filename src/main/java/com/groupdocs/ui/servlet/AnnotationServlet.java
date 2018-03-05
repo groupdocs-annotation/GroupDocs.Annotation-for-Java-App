@@ -6,7 +6,6 @@ import com.groupdocs.annotation.domain.AnnotationInfo;
 import com.groupdocs.annotation.domain.Point;
 import com.groupdocs.annotation.domain.TextFieldInfo;
 import com.groupdocs.annotation.domain.results.DeleteAnnotationResult;
-import com.groupdocs.annotation.domain.results.MoveAnnotationResult;
 import com.groupdocs.annotation.domain.results.SaveAnnotationTextResult;
 import com.groupdocs.annotation.handler.AnnotationImageHandler;
 import com.groupdocs.ui.Utils;
@@ -36,6 +35,7 @@ public class AnnotationServlet extends HttpServlet {
         String guid = request.getParameter("guid");
         long annotationId = imageHandler.getAnnotation(guid).getId();
 
+        imageHandler.deleteAnnotationReplies(annotationId);
         DeleteAnnotationResult result = imageHandler.deleteAnnotation(annotationId);
         new ObjectMapper().writeValue(response.getOutputStream(), result);
 

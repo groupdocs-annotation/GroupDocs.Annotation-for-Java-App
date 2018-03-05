@@ -31,6 +31,7 @@ public class AddAnnotationServlet
         AnnotationInfo annotation = new ObjectMapper().readValue(request.getInputStream(), AnnotationInfo.class);
         annotation.setDocumentGuid(documentId);
         CreateAnnotationResult result = imageHandler.createAnnotation(annotation);
+        imageHandler.createAnnotationReply(result.getId(), "");
         new ObjectMapper().writeValue(response.getOutputStream(), result);
     }
 }
