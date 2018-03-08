@@ -11,9 +11,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,7 +28,7 @@ public class DownloadAnnotatedServlet extends HttpServlet {
         List<AnnotationInfo> list = Arrays.asList(imageHandler.getAnnotations(document.getId()).getAnnotations());
 
         InputStream exported;
-        try (InputStream original = new FileInputStream(Utils.getStoragePath() + "/" + filename)) {
+        try (InputStream original = Files.newInputStream(Utils.getStoragePath(filename))) {
             exported = imageHandler.exportAnnotationsToDocument(original, list);
         } catch (Exception x) {
             throw new RuntimeException(x);

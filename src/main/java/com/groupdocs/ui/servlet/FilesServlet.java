@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 
 @WebServlet("/files")
@@ -20,7 +19,7 @@ public class FilesServlet extends HttpServlet {
 
         ArrayList<String> list = new ArrayList<>();
         Files.newDirectoryStream(
-                Paths.get(Utils.getStoragePath()),
+                Utils.getStoragePath(),
                 entry -> Files.isRegularFile(entry) && !entry.getFileName().toString().startsWith("GroupDocs.") && !entry.getFileName().toString().equalsIgnoreCase("README.txt")
         ).forEach(path -> {
             list.add(path.getFileName().toString());

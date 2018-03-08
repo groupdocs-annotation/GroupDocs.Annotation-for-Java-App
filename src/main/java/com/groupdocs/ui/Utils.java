@@ -1,17 +1,20 @@
 package com.groupdocs.ui;
 
 import com.groupdocs.annotation.common.license.License;
+import com.groupdocs.annotation.domain.AnnotationInfo;
 import com.groupdocs.annotation.domain.config.AnnotationConfig;
+import com.groupdocs.annotation.domain.results.CreateAnnotationResult;
 import com.groupdocs.annotation.handler.AnnotationImageHandler;
 import com.groupdocs.annotation.handler.input.IDocumentDataHandler;
 import com.groupdocs.annotation.handler.input.dataobjects.Document;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Properties;
 
 public class Utils {
@@ -22,13 +25,13 @@ public class Utils {
 
     public static AnnotationImageHandler createAnnotationImageHandler() {
         AnnotationConfig cfg = new AnnotationConfig();
-        cfg.setStoragePath(getStoragePath());
+        cfg.setStoragePath(getStoragePath().toString());
         AnnotationImageHandler annotator = new AnnotationImageHandler(cfg);
         return annotator;
 
     }
 
-    public static Document findDocumentByName(String name) {
+    synchronized public static Document findDocumentByName(String name) {
         AnnotationImageHandler imageHandler = Utils.createAnnotationImageHandler();
         IDocumentDataHandler documentDataHandler = imageHandler.getDocumentDataHandler();
         Document doc = documentDataHandler.getDocument(name);
@@ -36,14 +39,25 @@ public class Utils {
             return doc;
         }
 
-        long documentId = imageHandler.createDocument(name);
-
-        try (InputStream original = new FileInputStream(Utils.getStoragePath() + "/" + name)) {
-//            imageHandler.importAnnotations(original, name);
+        AnnotationInfo[] importedAnnotations;
+        try (InputStream original = Files.newInputStream(getStoragePath(name))) {
+            importedAnnotations = imageHandler.importAnnotations(original);
         } catch (Exception x) {
             throw new RuntimeException(x);
         }
-        return documentDataHandler.get(documentId);
+
+        long documentId = imageHandler.createDocument(name);
+        Arrays.stream(importedAnnotations)
+                .forEach(ai -> {
+                    ai.setDocumentGuid(documentId);
+                    CreateAnnotationResult car = imageHandler.createAnnotation(ai);
+                    Arrays.stream(ai.getReplies())
+                            .forEach(ari -> {
+                                imageHandler.createAnnotationReply(car.getId(), ari.getMessage());
+                            });
+                });
+        doc = documentDataHandler.get(documentId);
+        return doc;
     }
 
     public static void loadLicense() {
@@ -56,8 +70,12 @@ public class Utils {
         }
     }
 
-    public static String getStoragePath() {
+    public static String getSt__oragePath() {
         return getProjectProperty("storage.path");
+    }
+
+    public static Path getStoragePath(String... name) {
+        return Paths.get(getProjectProperty("storage.path"), name);
     }
 
     public static String getProjectProperty(String name) {
