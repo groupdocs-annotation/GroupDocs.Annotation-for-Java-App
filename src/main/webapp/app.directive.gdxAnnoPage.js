@@ -63,6 +63,7 @@
         var ps = paper.PaperScope.get(scope.paperScopeId);
 
         var currentObject = null;
+        var textRowMouseDown;
         ps.tool = new ps.Tool();
         ps.tool.minDistance = 3;
 
@@ -115,38 +116,16 @@
                     currentObject.strokeWidth = 2;
                     break;
                 case 'underline':
-                    var start = new ps.Point(event.point);
-                    $rootScope.startRow = getStartRow($rootScope.docInfo, start, attrs);
-                    $rootScope.startText = $rootScope.startRow[0].characterCoordinates.filter(function (x) {
-                        return Math.floor(x) > Math.floor(start.x);
-                    });
-                    if ($rootScope.startText.length > 1) {
-                        currentObject = new ps.Path.Line(new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight), new ps.Point($rootScope.startText[1], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight));
-                        currentObject.strokeColor = 'black';
-                        currentObject.strokeWidth = 2;
-                    }
-                    else if ($rootScope.startText.length > 1) {
-                        currentObject = new ps.Path.Line(new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight), new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight));
-                        currentObject.strokeColor = 'black';
-                        currentObject.strokeWidth = 2;
-                    }
-                    break;
                 case 'strikeout':
-                    var start = new ps.Point(event.point);
-                    $rootScope.startRow = getStartRow($rootScope.docInfo, start, attrs);
-                    $rootScope.startText = $rootScope.startRow[0].characterCoordinates.filter(function (x) {
-                        return Math.floor(x) > Math.floor(start.x);
-                    });
-                    if ($rootScope.startText.length > 1) {
-                        currentObject = new ps.Path.Line(new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight / 2), new ps.Point($rootScope.startText[1], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight / 2));
-                        currentObject.strokeColor = 'black';
-                        currentObject.strokeWidth = 2;
-                    }
-                    else if ($rootScope.startText.length > 1) {
-                        currentObject = new ps.Path.Line(new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight / 2), new ps.Point($rootScope.startText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight / 2));
-                        currentObject.strokeColor = 'black';
-                        currentObject.strokeWidth = 2;
-                    }
+                    textRowMouseDown = findRowUnderPoint($rootScope.docInfo, attrs.number, event.point);
+                    currentObject = new ps.Path.Rectangle(new ps.Rectangle(
+                        event.point.x,
+                        textRowMouseDown.lineTop,
+                        1,
+                        textRowMouseDown.lineHeight)
+                    );
+                    currentObject.fillColor = 'black';
+                    currentObject.opacity = 0.3;
                     break;
             }
         };
@@ -154,14 +133,14 @@
         ps.tool.onMouseDrag = function (event) {
             switch ($rootScope.selectedDrawingTool) {
                 case 'select':
-                    angular.forEach(scope.annotationsList, function (item) {
-                        if (currentObject && item.annotation.guid === currentObject.name && item.annotation.type === 4 && item.annotation.type === 8) {
+                    var currentAnnotation = findAnnotationByGuid(scope.annotationsList, $rootScope.selectedAnnotationGuid);
+                    if (currentObject !== null && currentAnnotation !== null) {
+                        if ([3, 4, 8, 11].indexOf(currentAnnotation.annotation.type) < 0) {
+                            currentObject.position.x += event.delta.x;
+                            currentObject.position.y += event.delta.y;
+                        } else {
                             currentObject = null;
                         }
-                    });
-                    if (currentObject) {
-                        currentObject.position.x += event.delta.x;
-                        currentObject.position.y += event.delta.y;
                     }
                     break;
                 case 'rectangle':
@@ -176,32 +155,11 @@
                     currentObject.position.y += event.delta.y;
                     break;
                 case 'underline':
-                    if (currentObject) {
-                        var end = new ps.Point(event.point);
-                        var endText = $rootScope.startRow[0].characterCoordinates.filter(function (x) {
-                            return Math.floor(x) > Math.floor(end.x);
-                        });
-                        if (endText.length > 1) {
-                            currentObject.add(new ps.Point(endText[1], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight));
-                        }
-                        else if (endText.length > 0) {
-                            currentObject.add(new ps.Point(endText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight));
-                        }
-                    }
-                    break;
                 case 'strikeout':
-                    if (currentObject) {
-                        var end = new ps.Point(event.point);
-                        var endText = $rootScope.startRow[0].characterCoordinates.filter(function (x) {
-                            return Math.floor(x) > Math.floor(end.x);
-                        });
-                        if (endText.length > 1) {
-                            currentObject.add(new ps.Point(endText[1], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight / 2));
+                    if (currentObject !== null) {
+                        if (currentObject.bounds.x + currentObject.bounds.width + event.delta.x <= textRowMouseDown.lineWidth) {
+                            currentObject.bounds.width += event.delta.x;
                         }
-                        else if (endText.length > 0) {
-                            currentObject.add(new ps.Point(endText[0], $rootScope.startRow[0].lineTop + $rootScope.startRow[0].lineHeight / 2));
-                        }
-
                     }
                     break;
                 case 'arrow':
@@ -324,28 +282,70 @@
                     };
                     break;
                 case 'underline':
-                    ant = {
-                        type: 11,
-                        svgPath: extractSvgPathData(currentObject),
-                        box: {
-                            x: currentObject.bounds.x,
-                            y: currentObject.bounds.y,
-                            width: 0,
-                            height: 0
-                        },
-                    };
-                    break;
                 case 'strikeout':
-                    ant = {
-                        type: 11,
-                        svgPath: extractSvgPathData(currentObject),
-                        box: {
-                            x: currentObject.bounds.x,
-                            y: currentObject.bounds.y,
-                            width: 0,
-                            height: 0
-                        },
-                    };
+                    if (currentObject !== null) {
+                        ant = angular.merge({}, ant, {
+                            svgPath: JSON.stringify([
+                                {
+                                    X: currentObject.bounds.x,
+                                    Y: attrs.height - currentObject.bounds.y
+                                },
+                                {
+                                    X: currentObject.bounds.x + currentObject.bounds.width,
+                                    Y: attrs.height - currentObject.bounds.y
+                                },
+                                {
+                                    X: currentObject.bounds.x,
+                                    Y: attrs.height - currentObject.bounds.y - currentObject.bounds.height
+                                },
+                                {
+                                    X: currentObject.bounds.x + currentObject.bounds.width,
+                                    Y: attrs.height - currentObject.bounds.y - currentObject.bounds.height
+                                }
+                            ]),
+                            box: {
+                                x: currentObject.bounds.x,
+                                y: attrs.height - currentObject.bounds.y,
+                                width: currentObject.bounds.width,
+                                height: currentObject.bounds.height
+                            },
+                            annotationPosition: {
+                                x: currentObject.bounds.x,
+                                y: attrs.height - currentObject.bounds.y
+                            }
+                        });
+                        currentObject.remove();
+                        switch ($rootScope.selectedDrawingTool) {
+                            case 'underline':
+                                currentObject = new ps.Path.Line({
+                                    from: [
+                                        currentObject.bounds.x,
+                                        currentObject.bounds.y + currentObject.bounds.height
+                                    ],
+                                    to: [
+                                        currentObject.bounds.x + currentObject.bounds.width,
+                                        currentObject.bounds.y + currentObject.bounds.height
+                                    ],
+                                    strokeColor: 'black'
+                                });
+                                ant = angular.merge({}, ant, {type: 11});
+                                break;
+                            case 'strikeout':
+                                currentObject = new ps.Path.Line({
+                                    from: [
+                                        currentObject.bounds.x,
+                                        currentObject.bounds.y + currentObject.bounds.height / 2.0
+                                    ],
+                                    to: [
+                                        currentObject.bounds.x + currentObject.bounds.width,
+                                        currentObject.bounds.y + currentObject.bounds.height / 2.0
+                                    ],
+                                    strokeColor: 'black'
+                                });
+                                ant = angular.merge({}, ant, {type: 3});
+                                break;
+                        }
+                    }
                     break;
             }
 
@@ -368,6 +368,19 @@
                 });
             } else {
                 currentObject = null;
+            }
+        };
+
+        ps.tool.onMouseMove = function (event) {
+            switch ($rootScope.selectedDrawingTool) {
+                case 'underline':
+                case 'strikeout':
+                    var r = findRowUnderPoint($rootScope.docInfo, attrs.number, event.point);
+                    if (typeof(r) !== 'undefined') {
+                        document.body.style.cursor = 'text';
+                    } else {
+                        document.body.style.cursor = 'auto';
+                    }
             }
         };
 
@@ -449,18 +462,34 @@
                     arrow.name = item.annotation.guid;
                     break;
                 case 11:
-                    var line = new ps.Path();
-                    line.pathData = item.annotation.svgPath;
-                    line.strokeColor = 'black';
-                    line.strokeWidth = 2;
-                    line.name = item.annotation.guid;
+                    var line11 = new ps.Path.Line({
+                        from: [
+                            JSON.parse(item.annotation.svgPath)[2].X,
+                            attrs.height - JSON.parse(item.annotation.svgPath)[2].Y
+                        ],
+                        to: [
+                            JSON.parse(item.annotation.svgPath)[3].X,
+                            attrs.height - JSON.parse(item.annotation.svgPath)[3].Y
+                        ],
+                        strokeColor: 'black',
+                        strokeWidth: 1,
+                        name: item.annotation.guid
+                    });
                     break;
                 case 3:
-                    var line = new ps.Path();
-                    line.pathData = item.annotation.svgPath;
-                    line.strokeColor = 'black';
-                    line.strokeWidth = 2;
-                    line.name = item.annotation.guid;
+                    var line3 = new ps.Path.Line({
+                        from: [
+                            JSON.parse(item.annotation.svgPath)[2].X,
+                            attrs.height - (JSON.parse(item.annotation.svgPath)[0].Y + JSON.parse(item.annotation.svgPath)[2].Y) / 2.0
+                        ],
+                        to: [
+                            JSON.parse(item.annotation.svgPath)[3].X,
+                            attrs.height - (JSON.parse(item.annotation.svgPath)[1].Y + JSON.parse(item.annotation.svgPath)[3].Y) / 2.0
+                        ],
+                        strokeColor: 'black',
+                        strokeWidth: 1,
+                        name: item.annotation.guid
+                    });
                     break;
                 case 12:
                     var distance = new ps.Group([
@@ -543,6 +572,27 @@
         }
 
         return data;
+    }
+
+    function findRowUnderPoint(docInfo, page, point) {
+        var currentRow = docInfo.pages[page].rows.filter(function (row) {
+            return row.lineLeft <= point.x && point.x <= row.lineLeft + row.lineWidth
+                && row.lineTop <= point.y && point.y <= row.lineTop + row.lineHeight;
+        });
+
+        return currentRow[0];
+    }
+
+    function findAnnotationByGuid(annotationInfo, guid) {
+        var a = annotationInfo.filter(function (item) {
+            return item.annotation.guid === guid;
+        });
+
+        if (a.length > 0) {
+            return a[0];
+        }
+
+        return null;
     }
 
     angular.module('GroupDocsAnnotationApp').directive('gdxAnnoPage', main, ['cfpLoadingBar']);
