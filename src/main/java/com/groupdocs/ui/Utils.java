@@ -2,6 +2,7 @@ package com.groupdocs.ui;
 
 import com.groupdocs.annotation.common.license.License;
 import com.groupdocs.annotation.domain.AnnotationInfo;
+import com.groupdocs.annotation.domain.AnnotationReplyInfo;
 import com.groupdocs.annotation.domain.config.AnnotationConfig;
 import com.groupdocs.annotation.domain.results.CreateAnnotationResult;
 import com.groupdocs.annotation.handler.AnnotationImageHandler;
@@ -51,10 +52,13 @@ public class Utils {
                 .forEach(ai -> {
                     ai.setDocumentGuid(documentId);
                     CreateAnnotationResult car = imageHandler.createAnnotation(ai);
-                    Arrays.stream(ai.getReplies())
-                            .forEach(ari -> {
-                                imageHandler.createAnnotationReply(car.getId(), ari.getMessage());
-                            });
+                    AnnotationReplyInfo[] rs = ai.getReplies();
+                    if (rs != null) {
+                        Arrays.stream(ai.getReplies())
+                                .forEach(ari -> {
+                                    imageHandler.createAnnotationReply(car.getId(), ari.getMessage());
+                                });
+                    }
                 });
         doc = documentDataHandler.get(documentId);
         return doc;
