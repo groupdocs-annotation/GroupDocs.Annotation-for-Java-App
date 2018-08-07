@@ -21,13 +21,16 @@
         $scope.selectPointTool = function ($event) {
             $rootScope.selectedDrawingTool = 'point';
         };
+        $scope.selectTextHighlightTool = function ($event) {
+            $rootScope.selectedDrawingTool = 'text-highlight';
+        };
         $scope.selectUnderlineTool = function ($event) {
             $rootScope.selectedDrawingTool = 'underline';
         };
         $scope.selectStrikeoutTool = function ($event) {
             $rootScope.selectedDrawingTool = 'strikeout';
         };
-        
+
         $scope.selectSelectTool();
     }
 

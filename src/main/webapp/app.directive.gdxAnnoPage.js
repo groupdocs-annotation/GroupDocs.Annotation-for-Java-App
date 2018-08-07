@@ -115,6 +115,17 @@
                     currentObject.fillColor = 'black';
                     currentObject.strokeWidth = 2;
                     break;
+                case 'text-highlight':
+                    textRowMouseDown = findRowUnderPoint($rootScope.docInfo, attrs.number, event.point);
+                    currentObject = new ps.Path.Rectangle(new ps.Rectangle(
+                        event.point.x,
+                        textRowMouseDown.lineTop,
+                        1,
+                        textRowMouseDown.lineHeight)
+                    );
+                    currentObject.fillColor = 'yellow';
+                    currentObject.opacity = 0.3;
+                    break;
                 case 'underline':
                 case 'strikeout':
                     textRowMouseDown = findRowUnderPoint($rootScope.docInfo, attrs.number, event.point);
@@ -154,6 +165,7 @@
                     currentObject.position.x += event.delta.x;
                     currentObject.position.y += event.delta.y;
                     break;
+                case 'text-highlight':
                 case 'underline':
                 case 'strikeout':
                     if (currentObject !== null) {
@@ -246,15 +258,26 @@
                             width: currentObject.bounds.width,
                             height: currentObject.bounds.height
                         },
+                        penColor: 0x010101,
+                        penStyle: 1,
+                        penWidth: 2,
                         type: 1
                     };
                     break;
                 case 'pencil':
-                    ant.type = 4;
-                    ant.svgPath = extractSvgPathData(currentObject);
+                    ant = angular.merge({}, ant, {
+                        penColor: 0x010101,
+                        penStyle: 1,
+                        penWidth: 2,
+                        svgPath: extractSvgPathData(currentObject),
+                        type: 4
+                    });
                     break;
                 case 'point':
                     ant = angular.merge({}, ant, {
+                        penColor: 0x010101,
+                        penStyle: 1,
+                        penWidth: 2,
                         type: 2,
                         box: {
                             x: event.point.x,
@@ -265,11 +288,19 @@
                     });
                     break;
                 case 'arrow':
-                    ant.type = 8;
-                    ant.svgPath = extractSvgPathData(currentObject);
+                    ant = angular.merge({}, ant, {
+                        penColor: 0x010101,
+                        penStyle: 1,
+                        penWidth: 2,
+                        svgPath: extractSvgPathData(currentObject),
+                        type: 8
+                    });
                     break;
                 case 'distance':
                     ant = {
+                        penColor: 0x010101,
+                        penStyle: 1,
+                        penWidth: 2,
                         type: 12,
                         svgPath: extractSvgPathData(currentObject),
                         fieldText: currentObject.children[3].content,
@@ -281,6 +312,7 @@
                         }
                     };
                     break;
+                case 'text-highlight':
                 case 'underline':
                 case 'strikeout':
                     if (currentObject !== null) {
@@ -316,6 +348,22 @@
                         });
                         currentObject.remove();
                         switch ($rootScope.selectedDrawingTool) {
+                            case 'text-highlight':
+                                currentObject = new ps.Path.Rectangle(new ps.Rectangle(
+                                    currentObject.bounds.x,
+                                    currentObject.bounds.y,
+                                    currentObject.bounds.width,
+                                    currentObject.bounds.height
+                                ));
+                                currentObject.fillColor = 'yellow';
+                                currentObject.opacity = 0.3;
+                                ant = angular.merge({}, ant, {
+                                    penColor: 0xffff01,
+                                    penStyle: 1,
+                                    penWidth: 2,
+                                    type: 0
+                                });
+                                break;
                             case 'underline':
                                 currentObject = new ps.Path.Line({
                                     from: [
@@ -328,7 +376,12 @@
                                     ],
                                     strokeColor: 'black'
                                 });
-                                ant = angular.merge({}, ant, {type: 11});
+                                ant = angular.merge({}, ant, {
+                                    penColor: 0x010101,
+                                    penStyle: 1,
+                                    penWidth: 2,
+                                    type: 11
+                                });
                                 break;
                             case 'strikeout':
                                 currentObject = new ps.Path.Line({
@@ -342,18 +395,20 @@
                                     ],
                                     strokeColor: 'black'
                                 });
-                                ant = angular.merge({}, ant, {type: 3});
+                                ant = angular.merge({}, ant, {
+                                    penColor: 0x010101,
+                                    penStyle: 1,
+                                    penWidth: 2,
+                                    type: 3
+                                });
                                 break;
                         }
                     }
                     break;
             }
 
-            if (ant.type) {
+            if (typeof(ant.type) !== 'undefined') {
                 ant = angular.merge({}, ant, {
-                    penColor: 0x010101,
-                    penStyle: 1,
-                    penWidth: 2,
                     pageNumber: attrs.number
                 });
                 var a = new AnnotationAddFactory(ant);
@@ -373,6 +428,7 @@
 
         ps.tool.onMouseMove = function (event) {
             switch ($rootScope.selectedDrawingTool) {
+                case 'text-highlight':
                 case 'underline':
                 case 'strikeout':
                     var r = findRowUnderPoint($rootScope.docInfo, attrs.number, event.point);
@@ -503,6 +559,18 @@
                     distance.children[3].content = Math.floor(distance.children[0].length) + " px";
                     distance.children[3].strokeWidth = 0.5;
                     distance.name = item.annotation.guid;
+                    break;
+                case 0:
+                    var shape = new ps.Rectangle(
+                        item.annotation.box.x,
+                        attrs.height - item.annotation.box.y,
+                        item.annotation.box.width,
+                        item.annotation.box.height
+                    );
+                    var path = new ps.Path.Rectangle(shape);
+                    path.fillColor = 'yellow';
+                    path.opacity = 0.3;
+                    path.name = item.annotation.guid;
                     break;
             }
         })
