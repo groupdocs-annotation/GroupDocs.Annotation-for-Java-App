@@ -1,3 +1,9 @@
+![Outdated](http://alexbobkov.com/resources/image/outdated.png)
+  
+This repository is outdated, instead please use one of the following repositories:  
+https://github.com/groupdocs-annotation/GroupDocs.Annotation-for-Java-Dropwizard  
+https://github.com/groupdocs-annotation/GroupDocs.Annotation-for-Java-Spring
+
 # GroupDocs.Annotation for Java App
 
 ![](https://i.imgur.com/1lur2Il.png)
